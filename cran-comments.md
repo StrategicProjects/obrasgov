@@ -1,16 +1,12 @@
 ## R CMD check results
 
-Local pre-submission result:
-
 0 errors | 0 warnings | 2 notes
 
-One note is local-toolchain-specific: HTML manual validation is skipped because
-the installed HTML Tidy is older than the version expected by R-devel. It does
-not concern package code or documentation.
+The first note identifies this as a new submission.
 
-The other note records that the intended public GitHub repository and pkgdown
-site still return HTTP 404. The package must not be submitted until those URLs
-are published and this check has been rerun.
+The second note is local-toolchain-specific: HTML manual validation is skipped
+because the installed HTML Tidy is older than the version expected by R-devel.
+It does not concern package code or documentation.
 
 ## Submission
 
