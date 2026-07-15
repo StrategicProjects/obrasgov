@@ -1,20 +1,20 @@
-# obrasgov
+# obrasgovr
 
-**obrasgov** provides a modern R interface to the [ObrasGov Open Data
+**obrasgovr** provides a modern R interface to the [ObrasGov Open Data
 API](https://api-publica.obrasgov.gestao.gov.br/obras/docs), maintained
 by the Brazilian federal government. It retrieves data about
 infrastructure projects, physical execution, budget commitments,
 contracts, geometries, feasibility studies, and the status histories of
 suspended or cancelled projects.
 
-## Why use obrasgov?
+## Why use obrasgovr?
 
 The official API is extensive and paginated. Using it directly requires
 building URLs, handling HTTP errors, joining pages, and transforming
-nested JSON. **obrasgov** handles those tasks and returns analysis-ready
-tibbles without discarding one-to-many relationships. It is designed for
-researchers, oversight bodies, public managers, data journalists, and
-civil society organizations.
+nested JSON. **obrasgovr** handles those tasks and returns
+analysis-ready tibbles without discarding one-to-many relationships. It
+is designed for researchers, oversight bodies, public managers, data
+journalists, and civil society organizations.
 
 Key features include:
 
@@ -40,14 +40,14 @@ GitHub version with:
 ``` r
 
 install.packages("pak")
-pak::pak("StrategicProjects/obrasgov")
+pak::pak("StrategicProjects/obrasgovr")
 ```
 
 ## Usage
 
 ``` r
 
-library(obrasgov)
+library(obrasgovr)
 
 projects_pe <- get_projects(
   uf_principal = "PE",
@@ -90,11 +90,11 @@ projetos_pe <- obter_projetos(
 ```
 
 See
-[`vignette("obrasgov")`](https://strategicprojects.github.io/obrasgov/articles/obrasgov.md)
+[`vignette("obrasgovr")`](https://strategicprojects.github.io/obrasgovr/articles/obrasgovr.md)
 for a complete introduction,
-[`vignette("end-to-end-workflow")`](https://strategicprojects.github.io/obrasgov/articles/end-to-end-workflow.md)
+[`vignette("end-to-end-workflow")`](https://strategicprojects.github.io/obrasgovr/articles/end-to-end-workflow.md)
 for a reproducible multi-resource analysis, and
-[`vignette("pagination-and-nested-data")`](https://strategicprojects.github.io/obrasgov/articles/pagination-and-nested-data.md)
+[`vignette("pagination-and-nested-data")`](https://strategicprojects.github.io/obrasgovr/articles/pagination-and-nested-data.md)
 for pagination and list-columns.
 
 ## Current API
@@ -106,11 +106,11 @@ scheduled to be discontinued on August 31, 2026, and is not supported.
 ## Contributing and conduct
 
 Contributions are welcome. Read
-[CONTRIBUTING.md](https://strategicprojects.github.io/obrasgov/CONTRIBUTING.md)
+[CONTRIBUTING.md](https://strategicprojects.github.io/obrasgovr/CONTRIBUTING.md)
 and the [Code of
-Conduct](https://strategicprojects.github.io/obrasgov/CODE_OF_CONDUCT.md)
+Conduct](https://strategicprojects.github.io/obrasgovr/CODE_OF_CONDUCT.md)
 before opening an issue or pull request.
 
 ## License
 
-MIT © obrasgov authors.
+MIT © obrasgovr authors.

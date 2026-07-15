@@ -4,77 +4,77 @@
 
 Resources from the ObrasGov Open Data API.
 
-- [`get_projects()`](https://strategicprojects.github.io/obrasgov/reference/get_projects.md)
-  [`obter_projetos()`](https://strategicprojects.github.io/obrasgov/reference/get_projects.md)
+- [`get_projects()`](https://strategicprojects.github.io/obrasgovr/reference/get_projects.md)
+  [`obter_projetos()`](https://strategicprojects.github.io/obrasgovr/reference/get_projects.md)
   : Retrieve infrastructure projects
-- [`get_physical_execution()`](https://strategicprojects.github.io/obrasgov/reference/get_physical_execution.md)
-  [`obter_execucao_fisica()`](https://strategicprojects.github.io/obrasgov/reference/get_physical_execution.md)
+- [`get_physical_execution()`](https://strategicprojects.github.io/obrasgovr/reference/get_physical_execution.md)
+  [`obter_execucao_fisica()`](https://strategicprojects.github.io/obrasgovr/reference/get_physical_execution.md)
   : Retrieve physical execution data
-- [`get_contracts()`](https://strategicprojects.github.io/obrasgov/reference/get_contracts.md)
-  [`obter_contratos()`](https://strategicprojects.github.io/obrasgov/reference/get_contracts.md)
+- [`get_contracts()`](https://strategicprojects.github.io/obrasgovr/reference/get_contracts.md)
+  [`obter_contratos()`](https://strategicprojects.github.io/obrasgovr/reference/get_contracts.md)
   : Retrieve contracts
-- [`get_commitments()`](https://strategicprojects.github.io/obrasgov/reference/get_commitments.md)
-  [`obter_empenhos()`](https://strategicprojects.github.io/obrasgov/reference/get_commitments.md)
+- [`get_commitments()`](https://strategicprojects.github.io/obrasgovr/reference/get_commitments.md)
+  [`obter_empenhos()`](https://strategicprojects.github.io/obrasgovr/reference/get_commitments.md)
   : Retrieve budget commitments
-- [`get_geometries()`](https://strategicprojects.github.io/obrasgov/reference/get_geometries.md)
-  [`obter_geometrias()`](https://strategicprojects.github.io/obrasgov/reference/get_geometries.md)
+- [`get_geometries()`](https://strategicprojects.github.io/obrasgovr/reference/get_geometries.md)
+  [`obter_geometrias()`](https://strategicprojects.github.io/obrasgovr/reference/get_geometries.md)
   : Retrieve geometries
-- [`get_status_history()`](https://strategicprojects.github.io/obrasgov/reference/get_status_history.md)
-  [`obter_historico_situacao()`](https://strategicprojects.github.io/obrasgov/reference/get_status_history.md)
+- [`get_status_history()`](https://strategicprojects.github.io/obrasgovr/reference/get_status_history.md)
+  [`obter_historico_situacao()`](https://strategicprojects.github.io/obrasgovr/reference/get_status_history.md)
   : Retrieve project status histories
-- [`get_feasibility_studies()`](https://strategicprojects.github.io/obrasgov/reference/get_feasibility_studies.md)
-  [`obter_estudos_viabilidade()`](https://strategicprojects.github.io/obrasgov/reference/get_feasibility_studies.md)
+- [`get_feasibility_studies()`](https://strategicprojects.github.io/obrasgovr/reference/get_feasibility_studies.md)
+  [`obter_estudos_viabilidade()`](https://strategicprojects.github.io/obrasgovr/reference/get_feasibility_studies.md)
   : Retrieve feasibility studies
-- [`get_last_update()`](https://strategicprojects.github.io/obrasgov/reference/get_last_update.md)
-  [`obter_data_atualizacao()`](https://strategicprojects.github.io/obrasgov/reference/get_last_update.md)
+- [`get_last_update()`](https://strategicprojects.github.io/obrasgovr/reference/get_last_update.md)
+  [`obter_data_atualizacao()`](https://strategicprojects.github.io/obrasgovr/reference/get_last_update.md)
   : Retrieve the data update timestamp
 
 ## Discovery and metadata
 
-- [`list_resources()`](https://strategicprojects.github.io/obrasgov/reference/list_resources.md)
-  [`obrasgov_recursos()`](https://strategicprojects.github.io/obrasgov/reference/list_resources.md)
+- [`list_resources()`](https://strategicprojects.github.io/obrasgovr/reference/list_resources.md)
+  [`obrasgov_recursos()`](https://strategicprojects.github.io/obrasgovr/reference/list_resources.md)
   : List available ObrasGov API resources
-- [`list_filters()`](https://strategicprojects.github.io/obrasgov/reference/list_filters.md)
-  [`obrasgov_filtros()`](https://strategicprojects.github.io/obrasgov/reference/list_filters.md)
+- [`list_filters()`](https://strategicprojects.github.io/obrasgovr/reference/list_filters.md)
+  [`obrasgov_filtros()`](https://strategicprojects.github.io/obrasgovr/reference/list_filters.md)
   : List filters accepted by a resource
-- [`result_metadata()`](https://strategicprojects.github.io/obrasgov/reference/result_metadata.md)
-  [`obrasgov_metadados()`](https://strategicprojects.github.io/obrasgov/reference/result_metadata.md)
+- [`result_metadata()`](https://strategicprojects.github.io/obrasgovr/reference/result_metadata.md)
+  [`obrasgov_metadados()`](https://strategicprojects.github.io/obrasgovr/reference/result_metadata.md)
   : Retrieve pagination metadata
 
 ## Portuguese aliases
 
 Compatibility aliases with Portuguese names and pagination arguments.
 
-- [`get_projects()`](https://strategicprojects.github.io/obrasgov/reference/get_projects.md)
-  [`obter_projetos()`](https://strategicprojects.github.io/obrasgov/reference/get_projects.md)
+- [`get_projects()`](https://strategicprojects.github.io/obrasgovr/reference/get_projects.md)
+  [`obter_projetos()`](https://strategicprojects.github.io/obrasgovr/reference/get_projects.md)
   : Retrieve infrastructure projects
-- [`get_physical_execution()`](https://strategicprojects.github.io/obrasgov/reference/get_physical_execution.md)
-  [`obter_execucao_fisica()`](https://strategicprojects.github.io/obrasgov/reference/get_physical_execution.md)
+- [`get_physical_execution()`](https://strategicprojects.github.io/obrasgovr/reference/get_physical_execution.md)
+  [`obter_execucao_fisica()`](https://strategicprojects.github.io/obrasgovr/reference/get_physical_execution.md)
   : Retrieve physical execution data
-- [`get_contracts()`](https://strategicprojects.github.io/obrasgov/reference/get_contracts.md)
-  [`obter_contratos()`](https://strategicprojects.github.io/obrasgov/reference/get_contracts.md)
+- [`get_contracts()`](https://strategicprojects.github.io/obrasgovr/reference/get_contracts.md)
+  [`obter_contratos()`](https://strategicprojects.github.io/obrasgovr/reference/get_contracts.md)
   : Retrieve contracts
-- [`get_commitments()`](https://strategicprojects.github.io/obrasgov/reference/get_commitments.md)
-  [`obter_empenhos()`](https://strategicprojects.github.io/obrasgov/reference/get_commitments.md)
+- [`get_commitments()`](https://strategicprojects.github.io/obrasgovr/reference/get_commitments.md)
+  [`obter_empenhos()`](https://strategicprojects.github.io/obrasgovr/reference/get_commitments.md)
   : Retrieve budget commitments
-- [`get_geometries()`](https://strategicprojects.github.io/obrasgov/reference/get_geometries.md)
-  [`obter_geometrias()`](https://strategicprojects.github.io/obrasgov/reference/get_geometries.md)
+- [`get_geometries()`](https://strategicprojects.github.io/obrasgovr/reference/get_geometries.md)
+  [`obter_geometrias()`](https://strategicprojects.github.io/obrasgovr/reference/get_geometries.md)
   : Retrieve geometries
-- [`get_status_history()`](https://strategicprojects.github.io/obrasgov/reference/get_status_history.md)
-  [`obter_historico_situacao()`](https://strategicprojects.github.io/obrasgov/reference/get_status_history.md)
+- [`get_status_history()`](https://strategicprojects.github.io/obrasgovr/reference/get_status_history.md)
+  [`obter_historico_situacao()`](https://strategicprojects.github.io/obrasgovr/reference/get_status_history.md)
   : Retrieve project status histories
-- [`get_feasibility_studies()`](https://strategicprojects.github.io/obrasgov/reference/get_feasibility_studies.md)
-  [`obter_estudos_viabilidade()`](https://strategicprojects.github.io/obrasgov/reference/get_feasibility_studies.md)
+- [`get_feasibility_studies()`](https://strategicprojects.github.io/obrasgovr/reference/get_feasibility_studies.md)
+  [`obter_estudos_viabilidade()`](https://strategicprojects.github.io/obrasgovr/reference/get_feasibility_studies.md)
   : Retrieve feasibility studies
-- [`get_last_update()`](https://strategicprojects.github.io/obrasgov/reference/get_last_update.md)
-  [`obter_data_atualizacao()`](https://strategicprojects.github.io/obrasgov/reference/get_last_update.md)
+- [`get_last_update()`](https://strategicprojects.github.io/obrasgovr/reference/get_last_update.md)
+  [`obter_data_atualizacao()`](https://strategicprojects.github.io/obrasgovr/reference/get_last_update.md)
   : Retrieve the data update timestamp
-- [`list_resources()`](https://strategicprojects.github.io/obrasgov/reference/list_resources.md)
-  [`obrasgov_recursos()`](https://strategicprojects.github.io/obrasgov/reference/list_resources.md)
+- [`list_resources()`](https://strategicprojects.github.io/obrasgovr/reference/list_resources.md)
+  [`obrasgov_recursos()`](https://strategicprojects.github.io/obrasgovr/reference/list_resources.md)
   : List available ObrasGov API resources
-- [`list_filters()`](https://strategicprojects.github.io/obrasgov/reference/list_filters.md)
-  [`obrasgov_filtros()`](https://strategicprojects.github.io/obrasgov/reference/list_filters.md)
+- [`list_filters()`](https://strategicprojects.github.io/obrasgovr/reference/list_filters.md)
+  [`obrasgov_filtros()`](https://strategicprojects.github.io/obrasgovr/reference/list_filters.md)
   : List filters accepted by a resource
-- [`result_metadata()`](https://strategicprojects.github.io/obrasgov/reference/result_metadata.md)
-  [`obrasgov_metadados()`](https://strategicprojects.github.io/obrasgov/reference/result_metadata.md)
+- [`result_metadata()`](https://strategicprojects.github.io/obrasgovr/reference/result_metadata.md)
+  [`obrasgov_metadados()`](https://strategicprojects.github.io/obrasgovr/reference/result_metadata.md)
   : Retrieve pagination metadata

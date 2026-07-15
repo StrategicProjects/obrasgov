@@ -2,7 +2,7 @@
 
 ``` r
 
-library(obrasgov)
+library(obrasgovr)
 ```
 
 ## Retrieve one page first

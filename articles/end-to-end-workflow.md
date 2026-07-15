@@ -2,7 +2,7 @@
 
 ``` r
 
-library(obrasgov)
+library(obrasgovr)
 ```
 
 This vignette develops a reproducible workflow for answering a concrete
@@ -61,7 +61,7 @@ all(requested_filters %in% available_project_filters)
 
 Use [`rlang::exec()`](https://rlang.r-lib.org/reference/exec.html) to
 pass a named list of arguments to
-[`get_projects()`](https://strategicprojects.github.io/obrasgov/reference/get_projects.md).
+[`get_projects()`](https://strategicprojects.github.io/obrasgovr/reference/get_projects.md).
 
 ``` r
 
@@ -142,9 +142,9 @@ contracts <- project_ids |>
 ```
 
 For a financial analysis, replace
-[`get_contracts()`](https://strategicprojects.github.io/obrasgov/reference/get_contracts.md)
+[`get_contracts()`](https://strategicprojects.github.io/obrasgovr/reference/get_contracts.md)
 with
-[`get_commitments()`](https://strategicprojects.github.io/obrasgov/reference/get_commitments.md).
+[`get_commitments()`](https://strategicprojects.github.io/obrasgovr/reference/get_commitments.md).
 Feasibility studies and project status histories follow the same
 pattern.
 
@@ -235,7 +235,7 @@ provenance <- list(
   query = project_query,
   project_metadata = result_metadata(projects),
   source_updated_at = get_last_update(),
-  package_version = utils::packageVersion("obrasgov"),
+  package_version = utils::packageVersion("obrasgovr"),
   saved_at = Sys.time()
 )
 
@@ -246,7 +246,7 @@ saveRDS(
     contracts = contracts,
     provenance = provenance
   ),
-  "obrasgov-pe-workflow.rds"
+  "obrasgovr-pe-workflow.rds"
 )
 ```
 

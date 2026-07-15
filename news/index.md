@@ -1,9 +1,11 @@
 # Changelog
 
-## obrasgov 0.1.0
+## obrasgovr 0.1.0
 
 ### New API client
 
+- Renamed the package and repository to `obrasgovr` to avoid a name
+  collision with an earlier GitHub package for the legacy ObrasGov API.
 - Rebuilt the package for the new ObrasGov open data API.
 - Added consistent snake_case functions for all eight public resources.
 - Added HTTP/2 over TLS negotiation, transient retries, request

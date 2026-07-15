@@ -3,8 +3,8 @@
 ### Guides
 
 - [Introduction to
-  obrasgov](https://strategicprojects.github.io/obrasgov/articles/obrasgov.md):
+  obrasgovr](https://strategicprojects.github.io/obrasgovr/articles/obrasgovr.md):
 - [An end-to-end ObrasGov
-  workflow](https://strategicprojects.github.io/obrasgov/articles/end-to-end-workflow.md):
+  workflow](https://strategicprojects.github.io/obrasgovr/articles/end-to-end-workflow.md):
 - [Pagination and nested
-  data](https://strategicprojects.github.io/obrasgov/articles/pagination-and-nested-data.md):
+  data](https://strategicprojects.github.io/obrasgovr/articles/pagination-and-nested-data.md):

@@ -11,7 +11,7 @@ get_contracts(
   page_size = 50L,
   all_pages = FALSE,
   page_limit = Inf,
-  base_url = .obrasgov_base_url()
+  base_url = .obrasgovr_base_url()
 )
 
 obter_contratos(
@@ -20,7 +20,7 @@ obter_contratos(
   tamanho_da_pagina = 50L,
   todas_paginas = FALSE,
   limite_paginas = Inf,
-  base_url = .obrasgov_base_url()
+  base_url = .obrasgovr_base_url()
 )
 ```
 
@@ -49,8 +49,8 @@ obter_contratos(
 
 - base_url:
 
-  HTTPS base URL. By default, uses the `obrasgov.base_url` option or the
-  official API environment.
+  HTTPS base URL. By default, uses the `obrasgovr.base_url` option or
+  the official API environment.
 
 - pagina, tamanho_da_pagina, todas_paginas, limite_paginas:
 
@@ -65,13 +65,13 @@ A tibble containing contracts linked to infrastructure projects.
 ## See also
 
 Other API resources:
-[`get_commitments()`](https://strategicprojects.github.io/obrasgov/reference/get_commitments.md),
-[`get_feasibility_studies()`](https://strategicprojects.github.io/obrasgov/reference/get_feasibility_studies.md),
-[`get_geometries()`](https://strategicprojects.github.io/obrasgov/reference/get_geometries.md),
-[`get_last_update()`](https://strategicprojects.github.io/obrasgov/reference/get_last_update.md),
-[`get_physical_execution()`](https://strategicprojects.github.io/obrasgov/reference/get_physical_execution.md),
-[`get_projects()`](https://strategicprojects.github.io/obrasgov/reference/get_projects.md),
-[`get_status_history()`](https://strategicprojects.github.io/obrasgov/reference/get_status_history.md)
+[`get_commitments()`](https://strategicprojects.github.io/obrasgovr/reference/get_commitments.md),
+[`get_feasibility_studies()`](https://strategicprojects.github.io/obrasgovr/reference/get_feasibility_studies.md),
+[`get_geometries()`](https://strategicprojects.github.io/obrasgovr/reference/get_geometries.md),
+[`get_last_update()`](https://strategicprojects.github.io/obrasgovr/reference/get_last_update.md),
+[`get_physical_execution()`](https://strategicprojects.github.io/obrasgovr/reference/get_physical_execution.md),
+[`get_projects()`](https://strategicprojects.github.io/obrasgovr/reference/get_projects.md),
+[`get_status_history()`](https://strategicprojects.github.io/obrasgovr/reference/get_status_history.md)
 
 ## Examples
 

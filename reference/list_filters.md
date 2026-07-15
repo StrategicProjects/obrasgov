@@ -18,7 +18,7 @@ obrasgov_filtros(recurso)
 - resource:
 
   A resource name returned by
-  [`list_resources()`](https://strategicprojects.github.io/obrasgov/reference/list_resources.md).
+  [`list_resources()`](https://strategicprojects.github.io/obrasgovr/reference/list_resources.md).
   Portuguese resource names used by earlier package versions are also
   accepted.
 

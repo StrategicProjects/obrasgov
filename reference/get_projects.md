@@ -13,7 +13,7 @@ get_projects(
   page_size = 50L,
   all_pages = FALSE,
   page_limit = Inf,
-  base_url = .obrasgov_base_url()
+  base_url = .obrasgovr_base_url()
 )
 
 obter_projetos(
@@ -22,7 +22,7 @@ obter_projetos(
   tamanho_da_pagina = 50L,
   todas_paginas = FALSE,
   limite_paginas = Inf,
-  base_url = .obrasgov_base_url()
+  base_url = .obrasgovr_base_url()
 )
 ```
 
@@ -53,8 +53,8 @@ obter_projetos(
 
 - base_url:
 
-  HTTPS base URL. By default, uses the `obrasgov.base_url` option or the
-  official API environment.
+  HTTPS base URL. By default, uses the `obrasgovr.base_url` option or
+  the official API environment.
 
 - pagina, tamanho_da_pagina, todas_paginas, limite_paginas:
 
@@ -65,19 +65,19 @@ obter_projetos(
 ## Value
 
 A tibble. One-to-many relationships are preserved in list-columns. Use
-[`result_metadata()`](https://strategicprojects.github.io/obrasgov/reference/result_metadata.md)
+[`result_metadata()`](https://strategicprojects.github.io/obrasgovr/reference/result_metadata.md)
 to inspect pagination information.
 
 ## See also
 
 Other API resources:
-[`get_commitments()`](https://strategicprojects.github.io/obrasgov/reference/get_commitments.md),
-[`get_contracts()`](https://strategicprojects.github.io/obrasgov/reference/get_contracts.md),
-[`get_feasibility_studies()`](https://strategicprojects.github.io/obrasgov/reference/get_feasibility_studies.md),
-[`get_geometries()`](https://strategicprojects.github.io/obrasgov/reference/get_geometries.md),
-[`get_last_update()`](https://strategicprojects.github.io/obrasgov/reference/get_last_update.md),
-[`get_physical_execution()`](https://strategicprojects.github.io/obrasgov/reference/get_physical_execution.md),
-[`get_status_history()`](https://strategicprojects.github.io/obrasgov/reference/get_status_history.md)
+[`get_commitments()`](https://strategicprojects.github.io/obrasgovr/reference/get_commitments.md),
+[`get_contracts()`](https://strategicprojects.github.io/obrasgovr/reference/get_contracts.md),
+[`get_feasibility_studies()`](https://strategicprojects.github.io/obrasgovr/reference/get_feasibility_studies.md),
+[`get_geometries()`](https://strategicprojects.github.io/obrasgovr/reference/get_geometries.md),
+[`get_last_update()`](https://strategicprojects.github.io/obrasgovr/reference/get_last_update.md),
+[`get_physical_execution()`](https://strategicprojects.github.io/obrasgovr/reference/get_physical_execution.md),
+[`get_status_history()`](https://strategicprojects.github.io/obrasgovr/reference/get_status_history.md)
 
 ## Examples
 
