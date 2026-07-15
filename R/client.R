@@ -55,7 +55,7 @@
     httr2::resp_body_json(response, simplifyVector = FALSE),
     error = function(error) {
       cli::cli_abort(
-        "A API ObrasGov retornou JSON invalido.",
+        "The ObrasGov API returned invalid JSON.",
         class = "obrasgov_response_error",
         parent = error
       )
@@ -72,7 +72,7 @@
 
   detail <- .response_error_detail(response)
   message <- paste0(
-    "A API ObrasGov retornou HTTP ", status, " (",
+    "The ObrasGov API returned HTTP ", status, " (",
     httr2::resp_status_desc(response), ")."
   )
 
@@ -105,7 +105,7 @@
       if (is.list(item) && is.character(item$msg)) {
         return(item$msg[[1]])
       }
-      "Erro de validacao"
+      "Validation error"
     })
     return(paste(unique(messages), collapse = "; "))
   }
@@ -116,29 +116,29 @@
 .obrasgov_get_paginated <- function(
     resource,
     filters,
-    pagina,
-    tamanho_da_pagina,
-    todas_paginas,
-    limite_paginas,
+    page,
+    page_size,
+    all_pages,
+    page_limit,
     base_url) {
   resource <- .match_resource(resource)
   metadata <- .obrasgov_resources[[resource]]
 
   filters <- .validate_filters(filters, metadata$filters)
   .check_pagination(
-    pagina,
-    tamanho_da_pagina,
-    todas_paginas,
-    limite_paginas
+    page,
+    page_size,
+    all_pages,
+    page_limit
   )
 
   bodies <- .obrasgov_collect_pages(
     metadata,
     filters,
-    pagina,
-    tamanho_da_pagina,
-    todas_paginas,
-    limite_paginas,
+    page,
+    page_size,
+    all_pages,
+    page_limit,
     base_url
   )
 
@@ -151,45 +151,45 @@
     resource,
     metadata,
     bodies,
-    pagina,
-    tamanho_da_pagina
+    page,
+    page_size
   )
 }
 
 .obrasgov_collect_pages <- function(
     metadata,
     filters,
-    pagina,
-    tamanho_da_pagina,
-    todas_paginas,
-    limite_paginas,
+    page,
+    page_size,
+    all_pages,
+    page_limit,
     base_url) {
   first <- .obrasgov_fetch_page(
     metadata$endpoint,
     filters,
-    pagina,
-    tamanho_da_pagina,
+    page,
+    page_size,
     base_url
   )
   total_pages <- as.integer(.or_default(first$total_pages, 0L))
   bodies <- list(first)
 
-  if (!isTRUE(todas_paginas) || total_pages <= pagina) {
+  if (!isTRUE(all_pages) || total_pages <= page) {
     return(bodies)
   }
 
   last_page <- total_pages
-  if (is.finite(limite_paginas)) {
-    last_page <- min(last_page, pagina + as.integer(limite_paginas) - 1L)
+  if (is.finite(page_limit)) {
+    last_page <- min(last_page, page + as.integer(page_limit) - 1L)
   }
 
-  pages <- seq.int(pagina + 1L, last_page)
+  pages <- seq.int(page + 1L, last_page)
   remaining <- purrr::map(pages, function(page) {
     .obrasgov_fetch_page(
       metadata$endpoint,
       filters,
       page,
-      tamanho_da_pagina,
+      page_size,
       base_url
     )
   })
@@ -202,18 +202,18 @@
     resource,
     metadata,
     bodies,
-    pagina,
-    tamanho_da_pagina) {
+    page,
+    page_size) {
   first <- bodies[[1L]]
   attr(result, "obrasgov_metadata") <- list(
-    recurso = resource,
+    resource = resource,
     endpoint = metadata$endpoint,
-    total_paginas = as.integer(.or_default(first$total_pages, 0L)),
-    total_itens = as.integer(.or_default(first$total_items, 0L)),
-    pagina_inicial = as.integer(pagina),
-    paginas_coletadas = length(bodies),
-    tamanho_da_pagina = as.integer(tamanho_da_pagina),
-    coletado_em = Sys.time()
+    total_pages = as.integer(.or_default(first$total_pages, 0L)),
+    total_items = as.integer(.or_default(first$total_items, 0L)),
+    first_page = as.integer(page),
+    pages_retrieved = length(bodies),
+    page_size = as.integer(page_size),
+    retrieved_at = Sys.time()
   )
 
   result
@@ -222,21 +222,21 @@
 .obrasgov_fetch_page <- function(
     endpoint,
     filters,
-    pagina,
-    tamanho_da_pagina,
+    page,
+    page_size,
     base_url) {
   query <- c(
     filters,
     list(
-      pagina = as.integer(pagina),
-      tamanho_da_pagina = as.integer(tamanho_da_pagina)
+      pagina = as.integer(page),
+      tamanho_da_pagina = as.integer(page_size)
     )
   )
   body <- .obrasgov_perform(endpoint, query, base_url)
 
   if (!is.list(body) || is.null(body$data) || !is.list(body$data)) {
     cli::cli_abort(
-      "A resposta paginada da API possui formato inesperado.",
+      "The paginated API response has an unexpected format.",
       class = "obrasgov_response_error"
     )
   }
@@ -273,7 +273,7 @@
 .record_to_tibble <- function(record) {
   if (!is.list(record) || is.null(names(record))) {
     cli::cli_abort(
-      "Um registro da API possui formato inesperado.",
+      "An API record has an unexpected format.",
       class = "obrasgov_response_error"
     )
   }
@@ -298,14 +298,14 @@
 
   filter_names <- names(filters)
   if (is.null(filter_names) || !all(nzchar(filter_names))) {
-    cli::cli_abort("Todos os filtros em {.arg ...} devem ter nome.")
+    cli::cli_abort("Every filter in {.arg ...} must be named.")
   }
 
   unknown <- setdiff(filter_names, names(allowed))
   if (length(unknown) > 0L) {
     cli::cli_abort(c(
-      "Filtro{?s} desconhecido{?s}: {.val {unknown}}.",
-      "i" = "Consulte os filtros com {.fn obrasgov_filtros}."
+      "Unknown filter{?s}: {.val {unknown}}.",
+      "i" = "See the available filters with {.fn list_filters}."
     ))
   }
 
@@ -314,7 +314,7 @@
   purrr::imap(filters, function(value, name) {
     if (length(value) != 1L || is.list(value) || is.na(value)) {
       cli::cli_abort(
-        "O filtro {.arg {name}} deve conter um unico valor nao ausente."
+        "Filter {.arg {name}} must contain one non-missing value."
       )
     }
     if (inherits(value, "Date")) {
@@ -325,34 +325,34 @@
 }
 
 .check_pagination <- function(
-    pagina,
-    tamanho_da_pagina,
-    todas_paginas,
-    limite_paginas) {
-  .check_positive_integer(pagina, "pagina")
-  .check_positive_integer(tamanho_da_pagina, "tamanho_da_pagina")
+    page,
+    page_size,
+    all_pages,
+    page_limit) {
+  .check_positive_integer(page, "page")
+  .check_positive_integer(page_size, "page_size")
 
-  if (tamanho_da_pagina > 200L) {
-    cli::cli_abort("{.arg tamanho_da_pagina} nao pode ser maior que 200.")
+  if (page_size > 200L) {
+    cli::cli_abort("{.arg page_size} cannot be greater than 200.")
   }
 
   if (
-    !is.logical(todas_paginas) ||
-      length(todas_paginas) != 1L ||
-      is.na(todas_paginas)
+    !is.logical(all_pages) ||
+      length(all_pages) != 1L ||
+      is.na(all_pages)
   ) {
-    cli::cli_abort("{.arg todas_paginas} deve ser `TRUE` ou `FALSE`.")
+    cli::cli_abort("{.arg all_pages} must be `TRUE` or `FALSE`.")
   }
 
   if (
-    !is.numeric(limite_paginas) ||
-      length(limite_paginas) != 1L ||
-      is.na(limite_paginas) ||
-      limite_paginas <= 0 ||
-      (!is.infinite(limite_paginas) && limite_paginas %% 1 != 0)
+    !is.numeric(page_limit) ||
+      length(page_limit) != 1L ||
+      is.na(page_limit) ||
+      page_limit <= 0 ||
+      (!is.infinite(page_limit) && page_limit %% 1 != 0)
   ) {
     cli::cli_abort(
-      "{.arg limite_paginas} deve ser um inteiro positivo ou `Inf`."
+      "{.arg page_limit} must be a positive integer or `Inf`."
     )
   }
 
@@ -367,7 +367,7 @@
       value < 1 ||
       value %% 1 != 0
   ) {
-    cli::cli_abort("{.arg {argument}} deve ser um inteiro positivo.")
+    cli::cli_abort("{.arg {argument}} must be a positive integer.")
   }
   invisible(NULL)
 }
@@ -380,25 +380,29 @@
       !grepl("^https://", base_url)
   ) {
     cli::cli_abort(
-      "{.arg base_url} deve ser uma URL HTTPS unica.",
+      "{.arg base_url} must be a single HTTPS URL.",
       class = "obrasgov_url_error"
     )
   }
   invisible(NULL)
 }
 
-#' Metadados de paginacao de um resultado
+#' Retrieve pagination metadata
 #'
-#' @param x Tibble retornado por uma funcao paginada do pacote.
+#' @param x A tibble returned by a paginated package function.
 #'
-#' @return Uma lista com o recurso, o total informado pela API e as paginas
-#'   coletadas; `NULL` para outros objetos.
+#' @return A list containing the resource, totals reported by the API, and
+#'   retrieved pages; `NULL` for other objects.
 #' @export
 #' @examples
-#' obrasgov_metadados(tibble::tibble())
-obrasgov_metadados <- function(x) {
+#' result_metadata(tibble::tibble())
+result_metadata <- function(x) {
   attr(x, "obrasgov_metadata", exact = TRUE)
 }
+
+#' @rdname result_metadata
+#' @export
+obrasgov_metadados <- result_metadata
 
 .or_default <- function(x, y) {
   if (is.null(x)) y else x

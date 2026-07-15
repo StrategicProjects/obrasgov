@@ -29,10 +29,10 @@ test_that("multiple pages are combined into a typed tibble", {
   }
   httr2::local_mocked_responses(mock)
 
-  result <- obter_projetos(
+  result <- get_projects(
     uf_principal = "PE",
-    tamanho_da_pagina = 1L,
-    todas_paginas = TRUE,
+    page_size = 1L,
+    all_pages = TRUE,
     base_url = "https://example.test/obras"
   )
 
@@ -43,10 +43,10 @@ test_that("multiple pages are combined into a typed tibble", {
   expect_length(result$executores[[1]], 2L)
   expect_length(requests, 2L)
 
-  metadata <- obrasgov_metadados(result)
-  expect_equal(metadata$total_paginas, 2L)
-  expect_equal(metadata$paginas_coletadas, 2L)
-  expect_equal(metadata$recurso, "projetos")
+  metadata <- result_metadata(result)
+  expect_equal(metadata$total_pages, 2L)
+  expect_equal(metadata$pages_retrieved, 2L)
+  expect_equal(metadata$resource, "projects")
 })
 
 test_that("page limits are respected", {
@@ -60,23 +60,37 @@ test_that("page limits are respected", {
   }
   httr2::local_mocked_responses(mock)
 
-  result <- obter_projetos(
-    todas_paginas = TRUE,
-    limite_paginas = 3L,
+  result <- get_projects(
+    all_pages = TRUE,
+    page_limit = 3L,
     base_url = "https://example.test/obras"
   )
 
   expect_equal(nrow(result), 3L)
   expect_equal(count, 3L)
-  expect_equal(obrasgov_metadados(result)$paginas_coletadas, 3L)
+  expect_equal(result_metadata(result)$pages_retrieved, 3L)
 })
 
 test_that("empty API pages return an empty tibble", {
   httr2::local_mocked_responses(list(mock_paginated_response()))
 
-  result <- obter_contratos(base_url = "https://example.test/obras")
+  result <- get_contracts(base_url = "https://example.test/obras")
 
   expect_s3_class(result, "tbl_df")
   expect_equal(nrow(result), 0L)
-  expect_equal(obrasgov_metadados(result)$total_itens, 0L)
+  expect_equal(result_metadata(result)$total_items, 0L)
+})
+
+test_that("Portuguese pagination arguments remain compatible", {
+  httr2::local_mocked_responses(list(mock_paginated_response()))
+
+  result <- obter_projetos(
+    pagina = 1L,
+    tamanho_da_pagina = 25L,
+    todas_paginas = FALSE,
+    limite_paginas = 1L,
+    base_url = "https://example.test/obras"
+  )
+
+  expect_equal(result_metadata(result)$page_size, 25L)
 })

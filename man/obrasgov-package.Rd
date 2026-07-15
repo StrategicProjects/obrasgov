@@ -4,29 +4,28 @@
 \name{obrasgov-package}
 \alias{obrasgov}
 \alias{obrasgov-package}
-\title{obrasgov: acesso aos dados abertos do ObrasGov}
+\title{obrasgov: Access ObrasGov open data}
 \description{
-O pacote \code{obrasgov} fornece uma interface moderna e tipada para a API de
-dados abertos do ObrasGov. Cada recurso da API é representado por uma função
-que retorna um \code{\link[tibble:tibble]{tibble::tibble()}}, preservando relações aninhadas em colunas
-de lista.
+\code{obrasgov} provides a modern, typed interface to the ObrasGov open data API.
+Each API resource is represented by a function that returns a
+\code{\link[tibble:tibble]{tibble::tibble()}}, preserving nested relationships in list-columns.
 }
 \details{
-As requisições usam HTTP/2 sobre TLS quando suportado pelo \code{libcurl}, com
-tentativas automáticas para falhas transitórias e limitação responsável da
-taxa de acesso. A API não exige autenticação.
+Requests use HTTP/2 over TLS when supported by \code{libcurl}, with automatic
+retries for transient failures and responsible request throttling. The API
+does not require authentication.
 }
-\section{Opções}{
+\section{Options}{
 
 \itemize{
-\item \code{obrasgov.base_url}: URL base alternativa para a API.
-\item \code{obrasgov.timeout}: tempo limite de cada requisição, em segundos.
-\item \code{obrasgov.user_agent}: identificador HTTP alternativo.
+\item \code{obrasgov.base_url}: alternative API base URL.
+\item \code{obrasgov.timeout}: timeout for each request, in seconds.
+\item \code{obrasgov.user_agent}: alternative HTTP user agent.
 }
 }
 
 \seealso{
-\href{https://api-publica.obrasgov.gestao.gov.br/obras/docs}{Documentacao oficial da API}
+\href{https://api-publica.obrasgov.gestao.gov.br/obras/docs}{Official API documentation}
 }
 \author{
 \strong{Maintainer}: Andre Leite \email{leite@castlab.org}

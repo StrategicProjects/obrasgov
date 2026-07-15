@@ -1,27 +1,30 @@
-# Contribuindo com o obrasgov
+# Contributing to obrasgov
 
-Obrigado pelo interesse em contribuir.
+Thank you for your interest in contributing.
 
-## Antes de comecar
+## Before you begin
 
-- Para bugs e mudancas de comportamento, abra uma issue descrevendo o caso e
-  inclua um exemplo minimo reproduzivel.
-- Nunca inclua dados pessoais, credenciais ou informacoes nao publicas.
-- Mudancas de interface devem manter nomes em `snake_case` e seguir o
+- For bugs and behavior changes, open an issue describing the case and include
+  a minimal reproducible example.
+- Never include personal data, credentials, or non-public information.
+- Interface changes must use English `snake_case` names and follow the
   [tidyverse style guide](https://style.tidyverse.org/).
+- Preserve Portuguese names and values that come directly from the upstream
+  ObrasGov API contract.
 
-## Desenvolvimento
+## Development
 
-1. Crie um fork e um branch para a mudanca.
-2. Instale as dependencias com `pak::pak()`.
-3. Adicione ou atualize testes em `tests/testthat/`.
-4. Execute `devtools::document()`, `devtools::test()` e `devtools::check()`.
-5. Atualize `NEWS.md` quando a mudanca afetar usuarios.
+1. Create a fork and a branch for the change.
+2. Install dependencies with `pak::pak()`.
+3. Add or update tests in `tests/testthat/`.
+4. Run `devtools::document()`, `devtools::test()`, and `devtools::check()`.
+5. Update `NEWS.md` when a change affects users.
 
-Testes de integracao com a API oficial sao opcionais e podem ser ativados com:
+Integration tests against the official API are optional and can be enabled
+with:
 
 ```sh
 OBRASGOV_LIVE_TESTS=true R -q -e 'devtools::test()'
 ```
 
-Ao participar, voce concorda com o [Codigo de Conduta](CODE_OF_CONDUCT.md).
+By participating, you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).

@@ -1,0 +1,218 @@
+---
+title: "An end-to-end ObrasGov workflow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{An end-to-end ObrasGov workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+```{r setup}
+library(obrasgov)
+```
+
+This vignette develops a reproducible workflow for answering a concrete
+question: which active infrastructure projects in Pernambuco are represented
+in ObrasGov, and what physical execution and contract records are associated
+with them?
+
+API calls are shown but not executed during package builds. This keeps the
+vignette suitable for CRAN while leaving the examples ready to run in an
+interactive R session.
+
+## 1. Define the query explicitly
+
+Keep the filter values and retrieval limits in an object. This makes the scope
+easy to review and store with the result.
+
+```{r define-query}
+project_query <- list(
+  uf_principal = "PE",
+  situacao = "Em execução",
+  page_size = 200,
+  all_pages = TRUE,
+  page_limit = 5
+)
+
+project_query
+```
+
+Before sending the request, confirm that the chosen filters exist:
+
+```{r validate-filter-names}
+available_project_filters <- list_filters("projects")$filter
+requested_filters <- c("uf_principal", "situacao")
+
+all(requested_filters %in% available_project_filters)
+```
+
+## 2. Retrieve the project table
+
+Use `rlang::exec()` to pass a named list of arguments to `get_projects()`.
+
+```{r retrieve-projects, eval = FALSE}
+projects <- rlang::exec(get_projects, !!!project_query)
+
+projects |>
+  dplyr::select(
+    id_projeto_investimento,
+    desc_nome,
+    situacao,
+    dt_inicial_prevista,
+    dt_final_prevista
+  )
+```
+
+Always inspect the metadata after a limited multi-page request. If
+`pages_retrieved` equals `page_limit` while `total_pages` is larger, the result
+is intentionally incomplete.
+
+```{r check-completeness, eval = FALSE}
+project_metadata <- result_metadata(projects)
+
+project_metadata[c(
+  "total_items",
+  "total_pages",
+  "pages_retrieved",
+  "retrieved_at"
+)]
+```
+
+## 3. Choose project identifiers
+
+Related endpoint queries should be limited to the projects needed for the
+analysis. The example below uses the first ten unique identifiers.
+
+```{r choose-identifiers, eval = FALSE}
+project_ids <- projects |>
+  dplyr::distinct(id_projeto_investimento) |>
+  dplyr::slice_head(n = 10) |>
+  dplyr::pull(id_projeto_investimento)
+
+project_ids
+```
+
+## 4. Retrieve related records
+
+Map over identifiers and combine the returned tibbles. Each request is narrow
+and its relationship to the project table is explicit.
+
+```{r retrieve-execution, eval = FALSE}
+physical_execution <- project_ids |>
+  purrr::map(function(project_id) {
+    get_physical_execution(
+      id_projeto_investimento = project_id,
+      all_pages = TRUE,
+      page_limit = 5
+    )
+  }) |>
+  purrr::list_rbind()
+```
+
+The same pattern retrieves contracts:
+
+```{r retrieve-contracts, eval = FALSE}
+contracts <- project_ids |>
+  purrr::map(function(project_id) {
+    get_contracts(
+      id_projeto_investimento = project_id,
+      all_pages = TRUE,
+      page_limit = 5
+    )
+  }) |>
+  purrr::list_rbind()
+```
+
+For a financial analysis, replace `get_contracts()` with
+`get_commitments()`. Feasibility studies and project status histories follow
+the same pattern.
+
+## 5. Join project attributes to related records
+
+The following local example demonstrates the join without contacting the API.
+Its column names mirror the ObrasGov response fields used above.
+
+```{r local-tables}
+projects_example <- tibble::tibble(
+  id_projeto_investimento = c("100.00-01", "200.00-02"),
+  desc_nome = c("School renovation", "Health unit construction"),
+  situacao = c("Em execução", "Em execução")
+)
+
+execution_example <- tibble::tibble(
+  id_projeto_investimento = c("100.00-01", "200.00-02"),
+  percentual_execucao_fisica = c(72.5, 35.0),
+  dt_atualizacao_execucao = as.Date(c("2026-06-30", "2026-07-10"))
+)
+
+contracts_example <- tibble::tibble(
+  id_projeto_investimento = c("100.00-01", "100.00-01", "200.00-02"),
+  id_contrato = c(11L, 12L, 21L),
+  valor_global_contrato = c(1200000, 300000, 2450000)
+)
+```
+
+Join execution data one row per project:
+
+```{r join-execution}
+project_execution <- projects_example |>
+  dplyr::left_join(
+    execution_example,
+    by = "id_projeto_investimento"
+  )
+
+project_execution
+```
+
+Contracts form a one-to-many relationship. Summarize them before joining when
+the desired result is one row per project:
+
+```{r summarize-contracts}
+contract_summary <- contracts_example |>
+  dplyr::group_by(id_projeto_investimento) |>
+  dplyr::summarise(
+    contract_count = dplyr::n(),
+    total_contract_value = sum(valor_global_contrato, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+analysis_table <- project_execution |>
+  dplyr::left_join(
+    contract_summary,
+    by = "id_projeto_investimento"
+  )
+
+analysis_table
+```
+
+## 6. Preserve provenance
+
+Save data together with the original query, pagination metadata, package
+version, retrieval time, and source update timestamp.
+
+```{r save-provenance, eval = FALSE}
+provenance <- list(
+  query = project_query,
+  project_metadata = result_metadata(projects),
+  source_updated_at = get_last_update(),
+  package_version = utils::packageVersion("obrasgov"),
+  saved_at = Sys.time()
+)
+
+saveRDS(
+  list(
+    projects = projects,
+    physical_execution = physical_execution,
+    contracts = contracts,
+    provenance = provenance
+  ),
+  "obrasgov-pe-workflow.rds"
+)
+```
+
+The saved object now contains both the analytical inputs and enough context to
+audit or repeat the retrieval later.

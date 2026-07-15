@@ -13,27 +13,27 @@ test_that("requests opt in to HTTP/2 over TLS", {
 
 test_that("only HTTPS base URLs are accepted", {
   expect_error(
-    obter_data_atualizacao(base_url = "http://example.test"),
+    get_last_update(base_url = "http://example.test"),
     class = "obrasgov_url_error"
   )
   expect_error(
-    obter_data_atualizacao(base_url = NA_character_),
+    get_last_update(base_url = NA_character_),
     class = "obrasgov_url_error"
   )
 })
 
 test_that("pagination arguments are validated locally", {
-  expect_error(obter_projetos(pagina = 0), "inteiro positivo")
-  expect_error(obter_projetos(tamanho_da_pagina = 201), "maior que 200")
-  expect_error(obter_projetos(todas_paginas = NA), "TRUE.*FALSE")
-  expect_error(obter_projetos(limite_paginas = 0), "inteiro positivo")
+  expect_error(get_projects(page = 0), "positive integer")
+  expect_error(get_projects(page_size = 201), "greater than 200")
+  expect_error(get_projects(all_pages = NA), "TRUE.*FALSE")
+  expect_error(get_projects(page_limit = 0), "positive integer")
 })
 
 test_that("filters are named and known", {
-  expect_error(obter_projetos("PE"), "devem ter nome")
-  expect_error(obter_projetos(uf = "PE"), "Filtro.*desconhecido")
-  expect_error(obter_projetos(uf_principal = c("PE", "PB")), "unico valor")
-  expect_error(obter_projetos(uf_principal = NA_character_), "nao ausente")
+  expect_error(get_projects("PE"), "must be named")
+  expect_error(get_projects(uf = "PE"), "Unknown filter")
+  expect_error(get_projects(uf_principal = c("PE", "PB")), "one non-missing")
+  expect_error(get_projects(uf_principal = NA_character_), "one non-missing")
 })
 
 test_that("Date filters are serialized in ISO format", {
@@ -44,7 +44,7 @@ test_that("Date filters are serialized in ISO format", {
   }
   httr2::local_mocked_responses(mock)
 
-  obter_projetos(
+  get_projects(
     dt_cadastro = as.Date("2026-07-15"),
     base_url = "https://example.test/obras"
   )

@@ -1,10 +1,10 @@
-# Codigo de Conduta
+# Code of Conduct
 
-Este projeto adota o [Contributor Covenant 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/).
+This project follows the [Contributor Covenant 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/).
 
-Esperamos um ambiente aberto, acolhedor e livre de assedio. Comportamentos
-abusivos, discriminatorios ou que exponham dados pessoais nao serao tolerados.
+We expect an open, welcoming, and harassment-free environment. Abusive or
+discriminatory behavior, and behavior that exposes personal data, will not be
+tolerated.
 
-Incidentes podem ser comunicados de forma confidencial ao mantenedor pelo
-e-mail `leite@castlab.org`. Todas as reclamacoes serao analisadas de maneira
-justa e respeitosa.
+Incidents can be reported confidentially to the maintainer at
+`leite@castlab.org`. All reports will be reviewed fairly and respectfully.

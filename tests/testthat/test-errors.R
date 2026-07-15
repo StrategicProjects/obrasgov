@@ -6,7 +6,7 @@ test_that("HTTP errors expose API validation messages", {
   httr2::local_mocked_responses(list(response))
 
   expect_error(
-    obter_projetos(base_url = "https://example.test/obras"),
+    get_projects(base_url = "https://example.test/obras"),
     "Valor invalido",
     class = "obrasgov_http_error"
   )
@@ -20,8 +20,8 @@ test_that("malformed paginated responses fail clearly", {
   httr2::local_mocked_responses(list(response))
 
   expect_error(
-    obter_projetos(base_url = "https://example.test/obras"),
-    "formato inesperado",
+    get_projects(base_url = "https://example.test/obras"),
+    "unexpected format",
     class = "obrasgov_response_error"
   )
 })
@@ -31,8 +31,8 @@ test_that("malformed records fail clearly", {
   httr2::local_mocked_responses(list(response))
 
   expect_error(
-    obter_projetos(base_url = "https://example.test/obras"),
-    "registro.*formato inesperado",
+    get_projects(base_url = "https://example.test/obras"),
+    "record.*unexpected format",
     class = "obrasgov_response_error"
   )
 })
@@ -45,8 +45,8 @@ test_that("malformed update timestamps fail clearly", {
   httr2::local_mocked_responses(list(response))
 
   expect_error(
-    obter_data_atualizacao(base_url = "https://example.test/obras"),
-    "formato inesperado",
+    get_last_update(base_url = "https://example.test/obras"),
+    "unexpected format",
     class = "obrasgov_response_error"
   )
 })

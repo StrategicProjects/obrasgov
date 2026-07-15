@@ -1,21 +1,20 @@
-#' obrasgov: acesso aos dados abertos do ObrasGov
+#' obrasgov: Access ObrasGov open data
 #'
-#' O pacote `obrasgov` fornece uma interface moderna e tipada para a API de
-#' dados abertos do ObrasGov. Cada recurso da API é representado por uma função
-#' que retorna um [tibble::tibble()], preservando relações aninhadas em colunas
-#' de lista.
+#' `obrasgov` provides a modern, typed interface to the ObrasGov open data API.
+#' Each API resource is represented by a function that returns a
+#' [tibble::tibble()], preserving nested relationships in list-columns.
 #'
-#' As requisições usam HTTP/2 sobre TLS quando suportado pelo `libcurl`, com
-#' tentativas automáticas para falhas transitórias e limitação responsável da
-#' taxa de acesso. A API não exige autenticação.
+#' Requests use HTTP/2 over TLS when supported by `libcurl`, with automatic
+#' retries for transient failures and responsible request throttling. The API
+#' does not require authentication.
 #'
-#' @section Opções:
-#' - `obrasgov.base_url`: URL base alternativa para a API.
-#' - `obrasgov.timeout`: tempo limite de cada requisição, em segundos.
-#' - `obrasgov.user_agent`: identificador HTTP alternativo.
+#' @section Options:
+#' - `obrasgov.base_url`: alternative API base URL.
+#' - `obrasgov.timeout`: timeout for each request, in seconds.
+#' - `obrasgov.user_agent`: alternative HTTP user agent.
 #'
 #' @seealso
-#' [Documentacao oficial da API][api-docs]
+#' [Official API documentation][api-docs]
 #'
 #' [api-docs]: https://api-publica.obrasgov.gestao.gov.br/obras/docs
 #'

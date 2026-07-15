@@ -5,5 +5,5 @@ test_that("the official API reports its update timestamp", {
     "Set OBRASGOV_LIVE_TESTS=true to run integration tests"
   )
 
-  expect_s3_class(obter_data_atualizacao(), "POSIXct")
+  expect_s3_class(get_last_update(), "POSIXct")
 })

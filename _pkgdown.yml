@@ -9,13 +9,13 @@ template:
     heading_font: system-ui
     code_font: monospace
 
-lang: pt
+lang: en
 
 home:
-  title: obrasgov | Dados abertos de infraestrutura publica no R
+  title: obrasgov | Brazilian public infrastructure data in R
   description: >
-    Interface R para projetos, execucao fisica, contratos, empenhos e
-    geometrias da API de Dados Abertos do ObrasGov.
+    R interface to projects, physical execution, contracts, commitments, and
+    geometries from the ObrasGov Open Data API.
 
 navbar:
   structure:
@@ -23,18 +23,20 @@ navbar:
     right: [search, github]
   components:
     intro:
-      text: Comece aqui
+      text: Get started
       href: articles/obrasgov.html
     reference:
-      text: Referencia
+      text: Reference
       href: reference/index.html
     articles:
-      text: Artigos
+      text: Articles
       menu:
-      - text: Paginacao e dados aninhados
-        href: articles/paginacao-e-dados-aninhados.html
+      - text: End-to-end workflow
+        href: articles/end-to-end-workflow.html
+      - text: Pagination and nested data
+        href: articles/pagination-and-nested-data.html
     news:
-      text: Novidades
+      text: News
       href: news/index.html
     github:
       icon: fab fa-github
@@ -42,8 +44,24 @@ navbar:
       href: https://github.com/StrategicProjects/obrasgov
 
 reference:
-- title: Consultas
-  desc: Recursos da API de Dados Abertos do ObrasGov.
+- title: Queries
+  desc: Resources from the ObrasGov Open Data API.
+  contents:
+  - get_projects
+  - get_physical_execution
+  - get_contracts
+  - get_commitments
+  - get_geometries
+  - get_status_history
+  - get_feasibility_studies
+  - get_last_update
+- title: Discovery and metadata
+  contents:
+  - list_resources
+  - list_filters
+  - result_metadata
+- title: Portuguese aliases
+  desc: Compatibility aliases with Portuguese names and pagination arguments.
   contents:
   - obter_projetos
   - obter_execucao_fisica
@@ -53,17 +71,16 @@ reference:
   - obter_historico_situacao
   - obter_estudos_viabilidade
   - obter_data_atualizacao
-- title: Descoberta e metadados
-  contents:
   - obrasgov_recursos
   - obrasgov_filtros
   - obrasgov_metadados
 
 articles:
-- title: Guias
+- title: Guides
   contents:
   - obrasgov
-  - paginacao-e-dados-aninhados
+  - end-to-end-workflow
+  - pagination-and-nested-data
 
 footer:
   structure:

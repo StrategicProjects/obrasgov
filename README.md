@@ -15,91 +15,107 @@ Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repost
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-O **obrasgov** fornece uma interface R moderna para a [API de Dados
-Abertos do
-ObrasGov](https://api-publica.obrasgov.gestao.gov.br/obras/docs),
-mantida pelo Governo Federal brasileiro. O pacote permite obter dados de
-projetos de infraestrutura, execução física, empenhos, contratos,
-geometrias, estudos de viabilidade e históricos de paralisação ou
-cancelamento.
+**obrasgov** provides a modern R interface to the [ObrasGov Open Data
+API](https://api-publica.obrasgov.gestao.gov.br/obras/docs), maintained
+by the Brazilian federal government. It retrieves data about
+infrastructure projects, physical execution, budget commitments,
+contracts, geometries, feasibility studies, and the status histories of
+suspended or cancelled projects.
 
-## Por que este pacote?
+## Why use obrasgov?
 
-A API oficial é ampla e paginada, mas seu consumo direto exige construir
-URLs, tratar erros HTTP, reunir páginas e transformar JSON aninhado. O
-**obrasgov** resolve essas tarefas e retorna tibbles prontos para
-análise, sem descartar relações um-para-muitos. O público-alvo inclui
-pesquisadores, órgãos de controle, gestores públicos, jornalistas de
-dados e organizações da sociedade civil.
+The official API is extensive and paginated. Using it directly requires
+building URLs, handling HTTP errors, joining pages, and transforming
+nested JSON. **obrasgov** handles those tasks and returns analysis-ready
+tibbles without discarding one-to-many relationships. It is designed for
+researchers, oversight bodies, public managers, data journalists, and
+civil society organizations.
 
-Principais características:
+Key features include:
 
-- interface consistente em `snake_case` para todos os recursos públicos;
-- negociação de HTTP/2 sobre TLS, retries e acesso limitado a 60
-  requisições por minuto;
-- paginação explícita e metadados de coleta;
-- datas convertidas para `Date` e horário de atualização em `POSIXct`;
-- listas aninhadas preservadas como list-columns;
-- testes sem acesso à rede e integração opcional com a API oficial.
+- a consistent English `snake_case` interface, with Portuguese
+  compatibility aliases;
+- HTTP/2 over TLS negotiation, retries, and a limit of 60 requests per
+  minute;
+- explicit pagination and retrieval metadata;
+- dates converted to `Date` and the update timestamp converted to
+  `POSIXct`;
+- nested objects preserved as list-columns;
+- offline unit tests and optional integration tests against the official
+  API.
 
-## Instalação
+The API’s filter names, response fields, and categorical values remain
+in Portuguese because they are part of the upstream ObrasGov contract.
 
-O pacote ainda está em desenvolvimento e não está no CRAN. Instale a
-versão do GitHub com:
+## Installation
+
+The package is under development and is not yet on CRAN. Install the
+GitHub version with:
 
 ``` r
 install.packages("pak")
 pak::pak("StrategicProjects/obrasgov")
 ```
 
-## Uso
+## Usage
 
 ``` r
 library(obrasgov)
 
-projetos_pe <- obter_projetos(
+projects_pe <- get_projects(
   uf_principal = "PE",
   situacao = "Em execução",
+  page_size = 100
+)
+
+projects_pe
+result_metadata(projects_pe)
+```
+
+Inspect resource and filter names without accessing the internet:
+
+``` r
+list_resources()
+list_filters("projects")
+```
+
+Retrieving multiple pages must be requested explicitly:
+
+``` r
+contracts <- get_contracts(
+  id_projeto_investimento = "134851.26-07",
+  all_pages = TRUE,
+  page_limit = 20
+)
+```
+
+Portuguese aliases remain available for compatibility. They retain the
+original Portuguese pagination argument names:
+
+``` r
+projetos_pe <- obter_projetos(
+  uf_principal = "PE",
   tamanho_da_pagina = 100
 )
-
-projetos_pe
-obrasgov_metadados(projetos_pe)
 ```
 
-Os nomes e tipos de filtros podem ser consultados sem acessar a
-internet:
+See `vignette("obrasgov")` for a complete introduction,
+`vignette("end-to-end-workflow")` for a reproducible multi-resource
+analysis, and `vignette("pagination-and-nested-data")` for pagination
+and list-columns.
 
-``` r
-obrasgov_recursos()
-obrasgov_filtros("projetos")
-```
+## Current API
 
-Para coletar várias páginas, a opção deve ser explícita:
+This package exclusively uses the current environment at
+`https://api-publica.obrasgov.gestao.gov.br/obras`. The previous API is
+scheduled to be discontinued on August 31, 2026, and is not supported.
 
-``` r
-contratos <- obter_contratos(
-  id_projeto_investimento = "134851.26-07",
-  todas_paginas = TRUE,
-  limite_paginas = 20
-)
-```
+## Contributing and conduct
 
-Veja `vignette("obrasgov")` para a introdução completa e
-`vignette("paginacao-e-dados-aninhados")` para paginação e list-columns.
-
-## Nova API
-
-Este pacote usa exclusivamente o novo ambiente em
-`https://api-publica.obrasgov.gestao.gov.br/obras`. A API anterior tem
-descontinuidade anunciada para 31 de agosto de 2026 e não é suportada.
-
-## Contribuição e conduta
-
-Contribuições são bem-vindas. Leia [CONTRIBUTING.md](CONTRIBUTING.md) e
-o [Código de Conduta](CODE_OF_CONDUCT.md) antes de abrir uma issue ou
+Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) and
+the [Code of Conduct](CODE_OF_CONDUCT.md) before opening an issue or
 pull request.
 
-## Licença
+## License
 
 MIT © obrasgov authors.

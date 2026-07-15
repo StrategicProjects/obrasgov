@@ -1,7 +1,7 @@
 .obrasgov_resources <- list(
-  projetos = list(
+  projects = list(
     endpoint = "projeto-investimento",
-    function_name = "obter_projetos",
+    function_name = "get_projects",
     filters = c(
       id_projeto_investimento = "character",
       projeto_estruturante = "character",
@@ -34,9 +34,9 @@
       possui_estudo_viabilidade = "character"
     )
   ),
-  empenhos = list(
+  commitments = list(
     endpoint = "empenho",
-    function_name = "obter_empenhos",
+    function_name = "get_commitments",
     filters = c(
       ug_emitente = "integer",
       id_projeto_investimento = "character",
@@ -68,9 +68,9 @@
       descricao_empenho = "character"
     )
   ),
-  execucao_fisica = list(
+  physical_execution = list(
     endpoint = "execucao-fisica",
-    function_name = "obter_execucao_fisica",
+    function_name = "get_physical_execution",
     filters = c(
       id_projeto_investimento = "character",
       percentual_execucao_fisica = "numeric",
@@ -83,9 +83,9 @@
       dt_atualizacao_execucao = "Date"
     )
   ),
-  contratos = list(
+  contracts = list(
     endpoint = "contrato",
-    function_name = "obter_contratos",
+    function_name = "get_contracts",
     filters = c(
       id_projeto_investimento = "character",
       id_contrato = "integer",
@@ -111,9 +111,9 @@
       valor_incluido_contrato = "numeric"
     )
   ),
-  geometrias = list(
+  geometries = list(
     endpoint = "geometria",
-    function_name = "obter_geometrias",
+    function_name = "get_geometries",
     filters = c(
       id_projeto_investimento = "character",
       id_geometria = "integer",
@@ -123,9 +123,9 @@
       origem_geometria = "character"
     )
   ),
-  historico_situacao = list(
+  status_history = list(
     endpoint = "historico-situacao-cancelada-paralisada",
-    function_name = "obter_historico_situacao",
+    function_name = "get_status_history",
     filters = c(
       id_historico_situacao_investimento = "integer",
       descricao_historico_situacao_investimento = "character",
@@ -136,18 +136,18 @@
       id_projeto_investimento = "character"
     )
   ),
-  estudos_viabilidade = list(
+  feasibility_studies = list(
     endpoint = "estudo-viabilidade",
-    function_name = "obter_estudos_viabilidade",
+    function_name = "get_feasibility_studies",
     filters = c(
       id_projeto_investimento = "character",
       tipo_estudo_viabilidade = "character",
       especificacao_estudo_viabilidade = "character"
     )
   ),
-  data_atualizacao = list(
+  last_update = list(
     endpoint = "data-atualizacao",
-    function_name = "obter_data_atualizacao",
+    function_name = "get_last_update",
     filters = character()
   )
 )
@@ -177,63 +177,89 @@
   )
 )
 
-#' Recursos disponiveis na API ObrasGov
+#' List available ObrasGov API resources
 #'
-#' @return Um tibble com o nome do recurso, a funcao correspondente e o
-#'   endpoint da API.
+#' @return A tibble containing each resource name, its corresponding function,
+#'   API endpoint, and whether it is paginated.
 #' @export
 #' @examples
-#' obrasgov_recursos()
-obrasgov_recursos <- function() {
+#' list_resources()
+list_resources <- function() {
   resources <- names(.obrasgov_resources)
 
   tibble::tibble(
-    recurso = resources,
-    funcao = purrr::map_chr(.obrasgov_resources, "function_name"),
+    resource = resources,
+    function_name = purrr::map_chr(.obrasgov_resources, "function_name"),
     endpoint = purrr::map_chr(.obrasgov_resources, "endpoint"),
-    paginado = resources != "data_atualizacao"
+    paginated = resources != "last_update"
   )
 }
 
-#' Filtros aceitos por um recurso
+#' @rdname list_resources
+#' @export
+obrasgov_recursos <- list_resources
+
+#' List filters accepted by a resource
 #'
-#' Lista os filtros publicados no contrato OpenAPI da versao suportada pelo
-#' pacote. Filtros desconhecidos sao rejeitados antes da requisicao para evitar
-#' consultas silenciosamente incorretas.
+#' Lists the filters published in the OpenAPI contract supported by this
+#' package. Unknown filters are rejected before a request is sent to prevent
+#' silently incorrect queries. Filter names and categorical values remain in
+#' Portuguese because they are part of the upstream API contract.
 #'
-#' @param recurso Nome de um recurso retornado por [obrasgov_recursos()].
+#' @param resource A resource name returned by [list_resources()]. Portuguese
+#'   resource names used by earlier package versions are also accepted.
+#' @param recurso Portuguese alias for `resource`, available only in
+#'   [obrasgov_filtros()].
 #'
-#' @return Um tibble com nomes, tipos esperados e, quando aplicavel, valores
-#'   permitidos.
+#' @return A tibble containing filter names, expected types, and allowed values
+#'   when applicable.
 #' @export
 #' @examples
-#' obrasgov_filtros("projetos")
-obrasgov_filtros <- function(recurso) {
-  recurso <- .match_resource(recurso)
-  filters <- .obrasgov_resources[[recurso]]$filters
+#' list_filters("projects")
+list_filters <- function(resource) {
+  resource <- .match_resource(resource)
+  filters <- .obrasgov_resources[[resource]]$filters
 
   tibble::tibble(
-    filtro = names(filters),
-    tipo = unname(filters),
-    valores_permitidos = purrr::map(names(filters), function(filter) {
+    filter = names(filters),
+    type = unname(filters),
+    allowed_values = purrr::map(names(filters), function(filter) {
       .obrasgov_choices[[filter]] %||% character()
     })
   )
 }
 
+#' @rdname list_filters
+#' @export
+obrasgov_filtros <- function(recurso) {
+  list_filters(recurso)
+}
+
 .match_resource <- function(resource) {
   if (!is.character(resource) || length(resource) != 1L || is.na(resource)) {
-    cli::cli_abort("{.arg recurso} deve ser uma string unica.")
+    cli::cli_abort("{.arg resource} must be a single string.")
   }
 
+  resource <- .portuguese_resources[[resource]] %||% resource
   choices <- names(.obrasgov_resources)
 
   if (!resource %in% choices) {
     cli::cli_abort(c(
-      "Recurso desconhecido: {.val {resource}}.",
-      "i" = "Use um de: {.val {choices}}."
+      "Unknown resource: {.val {resource}}.",
+      "i" = "Choose one of: {.val {choices}}."
     ))
   }
 
   resource
 }
+
+.portuguese_resources <- list(
+  projetos = "projects",
+  empenhos = "commitments",
+  execucao_fisica = "physical_execution",
+  contratos = "contracts",
+  geometrias = "geometries",
+  historico_situacao = "status_history",
+  estudos_viabilidade = "feasibility_studies",
+  data_atualizacao = "last_update"
+)

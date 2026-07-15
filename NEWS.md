@@ -10,3 +10,7 @@
   and lossless nested relationships.
 - Added offline unit tests, optional live integration tests, vignettes,
   pkgdown configuration and continuous integration workflows.
+- Made English names canonical across the public interface and documentation,
+  while retaining Portuguese compatibility aliases.
+- Added step-by-step vignettes for resource discovery, safe pagination, nested
+  data normalization, multi-resource joins, and reproducible provenance.

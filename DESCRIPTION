@@ -31,13 +31,15 @@ Imports:
     tibble (>= 3.2.0)
 Suggests:
     covr,
+    dplyr,
     knitr,
     rmarkdown,
-    testthat (>= 3.2.0)
+    testthat (>= 3.2.0),
+    tidyr
 VignetteBuilder: knitr
 Config/Needs/website: pkgdown
 Config/testthat/edition: 3
 Encoding: UTF-8
-Language: pt-BR
+Language: en-US
 Roxygen: list(markdown = TRUE)
 Config/roxygen2/version: 8.0.0
