@@ -349,3 +349,101 @@ test_that("an all-missing declared date field is still typed", {
   expect_s3_class(result$vigencia_fim_contrato, "Date")
   expect_true(all(is.na(result$vigencia_fim_contrato)))
 })
+
+test_that("an empty record is rejected rather than dropped", {
+  # A JSON `{}` is a zero-length *named* list: `names()` gives character(0), so
+  # a null-names check misses it, and it then vanishes as a zero-row tibble.
+  httr2::local_mocked_responses(list(mock_json_response(
+    '{"data":[{"id_projeto_investimento":"A"},{}],
+      "total_pages":1,"total_items":2,"page_number":1}'
+  )))
+
+  expect_error(
+    get_projects(base_url = "https://example.test/obras"),
+    class = "obrasgovr_response_error"
+  )
+})
+
+test_that("a canonical empty response is accepted", {
+  # Zero is a legitimate total, and .check_totals_consistent() must not reject
+  # the one shape that legitimately carries zeros.
+  httr2::local_mocked_responses(list(mock_json_response(
+    '{"data":[],"total_pages":0,"total_items":0,"page_number":1}'
+  )))
+
+  result <- get_projects(
+    all_pages = TRUE,
+    base_url = "https://example.test/obras"
+  )
+
+  expect_identical(nrow(result), 0L)
+  expect_identical(result_metadata(result)$total_pages, 0L)
+  expect_identical(result_metadata(result)$total_items, 0L)
+})
+
+test_that("all_pages = FALSE retrieves one page of a multi-page result", {
+  recorded <- local_recorded_requests(function(req, n) {
+    mock_paginated_response(
+      data = list(list(id_projeto_investimento = "A")),
+      total_pages = 5L,
+      page_number = n
+    )
+  })
+
+  result <- get_projects(base_url = "https://example.test/obras")
+
+  expect_length(recorded$requests, 1L)
+  expect_identical(result_metadata(result)$pages_retrieved, 1L)
+})
+
+test_that("pagination bounds accept their documented maximum", {
+  recorded <- local_recorded_requests(function(req, n) {
+    mock_paginated_response(
+      data = list(list(id_projeto_investimento = "A")),
+      total_pages = 1L,
+      page_number = 1L
+    )
+  })
+
+  expect_no_error(
+    get_projects(page_size = 200, base_url = "https://example.test/obras")
+  )
+  expect_error(
+    get_projects(page_size = 201, base_url = "https://example.test/obras"),
+    "greater than 200"
+  )
+})
+
+test_that("fractional pagination arguments are rejected", {
+  expect_error(get_projects(page = 1.5), "positive integer")
+  expect_error(get_projects(page_size = 10.5), "positive integer")
+  expect_error(
+    get_projects(all_pages = TRUE, page_limit = 2.5),
+    "positive integer"
+  )
+})
+
+test_that("dates with leading junk keep their text", {
+  # The ISO regex must be anchored at both ends.
+  httr2::local_mocked_responses(list(mock_json_response(
+    '{"data":[{"dt_cadastro":"junk2026-01-02"}],
+      "total_pages":1,"total_items":1,"page_number":1}'
+  )))
+
+  result <- get_projects(base_url = "https://example.test/obras")
+
+  expect_identical(result$dt_cadastro, "junk2026-01-02")
+})
+
+test_that("records that are not named lists are rejected", {
+  for (record in c("\"bad\"", "[1,2]", "42")) {
+    httr2::local_mocked_responses(list(mock_json_response(sprintf(
+      '{"data":[%s],"total_pages":1,"total_items":1,"page_number":1}', record
+    ))))
+
+    expect_error(
+      get_projects(base_url = "https://example.test/obras"),
+      class = "obrasgovr_response_error"
+    )
+  }
+})

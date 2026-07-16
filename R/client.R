@@ -420,7 +420,11 @@
 }
 
 .record_to_tibble <- function(record) {
-  if (!is.list(record) || is.null(names(record))) {
+  # A JSON `{}` arrives as a zero-length *named* list, so `names()` returns
+  # `character(0)` rather than `NULL` and slips past a null-names check. It then
+  # becomes a zero-row tibble and vanishes in the row-bind, leaving the result
+  # one record short of what the API said it sent, with no error.
+  if (!is.list(record) || length(record) == 0L || is.null(names(record))) {
     cli::cli_abort(
       "An API record has an unexpected format.",
       class = "obrasgovr_response_error"

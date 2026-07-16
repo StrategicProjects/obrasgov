@@ -131,3 +131,27 @@ test_that("well-formed timestamp shapes are accepted", {
     )
   }
 })
+
+test_that("HTTP 400 is the error boundary", {
+  # 399 must pass through and 400 must abort: the comparison is `< 400L`.
+  httr2::local_mocked_responses(list(httr2::response_json(
+    status_code = 400L,
+    body = list(detail = "bad request")
+  )))
+  expect_error(
+    get_projects(base_url = "https://example.test/obras"),
+    class = "obrasgovr_http_400"
+  )
+})
+
+test_that("timestamps with leading junk are rejected", {
+  httr2::local_mocked_responses(list(httr2::response_json(
+    status_code = 200L,
+    body = list(data_ultima_atualizacao = "junk2026-07-15T00:00:00")
+  )))
+
+  expect_error(
+    get_last_update(base_url = "https://example.test/obras"),
+    class = "obrasgovr_response_error"
+  )
+})
