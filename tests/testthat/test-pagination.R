@@ -230,3 +230,122 @@ test_that("impossible calendar dates are kept rather than dropped", {
   expect_type(result$dt_cadastro, "character")
   expect_identical(result$dt_cadastro, "2026-02-30")
 })
+
+test_that("each collected page is actually requested from the API", {
+  # Mutation-tested: hardcoding `pagina = 1L` in the query previously left the
+  # whole suite green, because the fixtures branch on call order and nothing
+  # asserted the query parameter.
+  recorded <- local_recorded_requests(function(req, n) {
+    mock_paginated_response(
+      data = list(list(id_projeto_investimento = as.character(n))),
+      total_pages = 3L,
+      page_number = n
+    )
+  })
+
+  get_projects(all_pages = TRUE, base_url = "https://example.test/obras")
+
+  requested <- vapply(
+    recorded$requests,
+    function(req) {
+      as.integer(httr2::url_parse(httr2::req_get_url(req))$query$pagina)
+    },
+    integer(1)
+  )
+
+  expect_identical(requested, 1:3)
+})
+
+test_that("a failure on a later page keeps its condition class", {
+  # Mutation-tested: reverting `lapply()` to `purrr::map()` wraps the error in
+  # `purrr_error_indexed`, and no test noticed. `expect_error(class=)` follows
+  # parent conditions, so the class has to be inspected directly.
+  page <- 0L
+  httr2::local_mocked_responses(function(req) {
+    page <<- page + 1L
+    if (page == 1L) {
+      return(mock_paginated_response(
+        data = list(list(id_projeto_investimento = "1.00-00")),
+        total_pages = 2L,
+        page_number = 1L
+      ))
+    }
+    mock_json_response('{"detail":"boom"}', status_code = 500L)
+  })
+
+  condition <- tryCatch(
+    get_projects(all_pages = TRUE, base_url = "https://example.test/obras"),
+    error = identity
+  )
+
+  expect_true(inherits(condition, "obrasgovr_http_error"))
+  expect_false(inherits(condition, "purrr_error_indexed"))
+})
+
+test_that("a malformed record keeps its condition class", {
+  httr2::local_mocked_responses(list(mock_json_response(
+    '{"data":[{"id":"ok"},"bad"],"total_pages":1,"total_items":2,
+      "page_number":1}'
+  )))
+
+  condition <- tryCatch(
+    get_projects(base_url = "https://example.test/obras"),
+    error = identity
+  )
+
+  expect_true(inherits(condition, "obrasgovr_response_error"))
+  expect_false(inherits(condition, "purrr_error_indexed"))
+})
+
+test_that("pagination totals that contradict the payload are rejected", {
+  httr2::local_mocked_responses(list(mock_json_response(
+    '{"data":[{"id":"A"}],"total_pages":0,"total_items":100,"page_number":1}'
+  )))
+
+  expect_error(
+    get_projects(all_pages = TRUE, base_url = "https://example.test/obras"),
+    class = "obrasgovr_response_error"
+  )
+})
+
+test_that("an unusable page marker is rejected", {
+  for (marker in c('"1"', "1.9", "1e999")) {
+    httr2::local_mocked_responses(list(mock_json_response(sprintf(
+      '{"data":[{"id":"A"}],"total_pages":1,"total_items":1,"page_number":%s}',
+      marker
+    ))))
+
+    expect_error(
+      suppressWarnings(get_projects(base_url = "https://example.test/obras")),
+      class = "obrasgovr_response_error"
+    )
+  }
+})
+
+test_that("dates keep their text when the value is not a bare ISO date", {
+  # `as.Date(x, format = "%Y-%m-%d")` ignores trailing text, so a timestamp
+  # would silently lose its time while appearing successfully typed.
+  for (value in c("2026-01-02T03:04:05", "2026-01-02junk", "2026-1-2")) {
+    httr2::local_mocked_responses(list(mock_json_response(sprintf(
+      '{"data":[{"dt_cadastro":"%s"}],"total_pages":1,"total_items":1,
+        "page_number":1}', value
+    ))))
+
+    result <- get_projects(base_url = "https://example.test/obras")
+    expect_identical(result$dt_cadastro, value)
+  }
+})
+
+test_that("an all-missing declared date field is still typed", {
+  # Otherwise the same documented column is logical, character or Date
+  # depending on what a given page happens to contain.
+  httr2::local_mocked_responses(list(mock_json_response(
+    '{"data":[{"vigencia_fim_contrato":null},{"vigencia_fim_contrato":null}],
+      "total_pages":1,"total_items":2,"page_number":1}'
+  )))
+
+  result <- get_contracts(base_url = "https://example.test/obras")
+
+  expect_s3_class(result$vigencia_fim_contrato, "Date")
+  expect_true(all(is.na(result$vigencia_fim_contrato)))
+})

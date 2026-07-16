@@ -177,6 +177,7 @@
     base_url
   )
   total_pages <- .response_total(first, "total_pages")
+  .check_totals_consistent(first, total_pages)
   bodies <- list(first)
 
   if (!isTRUE(all_pages) || total_pages <= page) {
@@ -261,8 +262,24 @@
   # The response says which page it is. Without checking, a server or proxy that
   # answers page 2 with page 1 would be silently collected as if it were new
   # data, duplicating records under the guise of a complete result.
+  # A marker that is present must be usable: accepting only numerics let a
+  # string "1" disable the check entirely, and `as.integer()` truncation let
+  # 1.9 pass as page 1.
   returned <- body$page_number
-  if (is.numeric(returned) && length(returned) == 1L && !is.na(returned)) {
+  if (!is.null(returned)) {
+    if (
+      !is.numeric(returned) ||
+        length(returned) != 1L ||
+        !is.finite(returned) ||
+        returned %% 1 != 0 ||
+        abs(returned) > .Machine$integer.max
+    ) {
+      cli::cli_abort(
+        "The API reported an unusable {.field page_number}.",
+        class = "obrasgovr_response_error"
+      )
+    }
+
     if (as.integer(returned) != as.integer(page)) {
       cli::cli_abort(
         c(
@@ -307,12 +324,41 @@
   as.integer(value)
 }
 
+# Zero is a legitimate total for an empty result, but a zero that contradicts
+# the payload is not: `total_pages = 0` alongside records would stop collection
+# on the first page and present the truncated result as complete -- the same
+# silent-incompleteness class as a missing total, reached through a bad zero.
+.check_totals_consistent <- function(body, total_pages) {
+  total_items <- .response_total(body, "total_items")
+  records <- length(body$data)
+
+  inconsistent <- (total_pages == 0L && (records > 0L || total_items > 0L)) ||
+    (total_items == 0L && records > 0L)
+
+  if (inconsistent) {
+    cli::cli_abort(
+      c(
+        "The API reported pagination totals that contradict the response.",
+        "i" = "Got {.val {records}} record{?s} with
+               {.field total_pages} = {.val {total_pages}} and
+               {.field total_items} = {.val {total_items}}.",
+        "i" = "Pagination cannot be verified, so the result may be incomplete."
+      ),
+      class = "obrasgovr_response_error"
+    )
+  }
+
+  invisible(NULL)
+}
+
 .records_to_tibble <- function(records, date_fields = character()) {
   if (length(records) == 0L) {
     return(tibble::tibble())
   }
 
-  rows <- purrr::map(records, .record_to_tibble)
+  # `lapply()`, not `purrr::map()`: purrr wraps errors in `purrr_error_indexed`,
+  # which strips the documented condition class from a malformed record.
+  rows <- lapply(records, .record_to_tibble)
   result <- purrr::list_rbind(rows)
 
   # The `dt_`/`data_` prefixes catch most date fields, but not all: the API
@@ -326,22 +372,51 @@
   for (column in date_columns) {
     value <- result[[column]]
 
-    if (!is.character(value) || !any(!is.na(value))) {
+    if (inherits(value, "Date")) {
       next
     }
 
-    # The format must be explicit: `as.Date()` guesses otherwise, and then a
-    # value like "2026-02-30" matches the ISO shape but is not a real date, so
-    # it errors outright when it is the only value present. Convert only when
-    # every value parses, so a column is never silently emptied.
-    parsed <- as.Date(value, format = "%Y-%m-%d")
-
-    if (!any(is.na(parsed) & !is.na(value))) {
-      result[[column]] <- parsed
+    # A column whose values are all missing carries no evidence of its type, so
+    # type it from the resource metadata rather than leaving it logical: the
+    # same field must not change class from page to page.
+    if (all(is.na(value)) && column %in% date_fields) {
+      result[[column]] <- as.Date(rep(NA_character_, nrow(result)))
+      next
     }
+
+    if (!is.character(value)) {
+      next
+    }
+
+    result[[column]] <- .as_iso_date(value) %||% value
   }
 
   result
+}
+
+# Converts a character column to `Date`, or returns NULL to leave it alone.
+#
+# The shape is checked with an anchored regex *and* parsed with an explicit
+# format. Neither alone is enough: `as.Date()` without a format guesses and
+# errors on "2026-02-30", while `as.Date(x, format = "%Y-%m-%d")` ignores
+# trailing text, so "2026-01-02T03:04:05" would silently become 2026-01-02 and
+# lose its time. Conversion happens only when every present value passes both,
+# so a column is never partly emptied.
+.as_iso_date <- function(value) {
+  present <- !is.na(value)
+  iso <- grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", value[present])
+
+  if (!any(present) || !all(iso)) {
+    return(NULL)
+  }
+
+  parsed <- as.Date(value, format = "%Y-%m-%d")
+
+  if (any(is.na(parsed) & present)) {
+    return(NULL)
+  }
+
+  parsed
 }
 
 .record_to_tibble <- function(record) {
