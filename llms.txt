@@ -105,10 +105,11 @@ for pagination and list-columns.
 ## Current API
 
 This package exclusively uses the current environment at
-`https://api-publica.obrasgov.gestao.gov.br/obras`, and does not support
-the previous API. ObrasGov has set **31 August 2026** as the deadline
-for migrating to this environment; until then the earlier APIs keep
-running and being updated. See the [official
+`https://api-publica.obrasgov.gestao.gov.br/obras`. The **previous
+ObrasGov API** is not supported here: ObrasGov has set **31 August
+2026** as the deadline for migrating away from that previous API to this
+environment. Until that date, the previous API keeps running and being
+updated. See the [official
 announcement](https://www.gov.br/obrasgov/pt-br/ferramentas-de-gestao-e-transparencia/api-de-dados-abertos-obrasgov-br_novo).
 
 ## Contributing and conduct
