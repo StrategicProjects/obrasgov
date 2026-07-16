@@ -375,16 +375,50 @@ obter_estudos_viabilidade <- function(
 #' }
 get_last_update <- function(base_url = .obrasgovr_base_url()) {
   body <- .obrasgovr_perform("data-atualizacao", base_url = base_url)
-  value <- body$data_ultima_atualizacao
+  value <- if (is.list(body)) body$data_ultima_atualizacao else NULL
 
-  if (!is.character(value) || length(value) != 1L) {
+  if (!is.character(value) || length(value) != 1L || is.na(value)) {
     cli::cli_abort(
       "The data update response has an unexpected format.",
       class = "obrasgovr_response_error"
     )
   }
 
-  as.POSIXct(value, format = "%Y-%m-%dT%H:%M:%S", tz = "UTC")
+  .parse_timestamp(value)
+}
+
+# The API reports naive UTC timestamps, but a value carrying an offset must not
+# be read as UTC: `strptime()` ignores trailing characters, which would shift
+# the result by the offset. Unparseable input returns `NA` rather than erroring,
+# so the result has to be checked explicitly.
+.parse_timestamp <- function(value) {
+  formats <- c(
+    "%Y-%m-%dT%H:%M:%OS%z",
+    "%Y-%m-%dT%H:%M:%OSZ",
+    "%Y-%m-%dT%H:%M:%OS"
+  )
+  offset <- grepl("([+-][0-9]{2}:?[0-9]{2}|Z)$", value)
+
+  for (format in formats) {
+    # Only try offset-aware formats when an offset is actually present, and
+    # naive ones only when it is not; otherwise a trailing offset is dropped.
+    if (xor(offset, grepl("%z|Z$", format))) {
+      next
+    }
+    parsed <- as.POSIXct(
+      sub("([+-][0-9]{2}):([0-9]{2})$", "\\1\\2", value),
+      format = format,
+      tz = "UTC"
+    )
+    if (!is.na(parsed)) {
+      return(parsed)
+    }
+  }
+
+  cli::cli_abort(
+    "The data update response has an unparseable timestamp: {.val {value}}.",
+    class = "obrasgovr_response_error"
+  )
 }
 
 #' @rdname get_last_update

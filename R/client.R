@@ -92,7 +92,9 @@
     error = function(error) NULL
   )
 
-  if (is.null(body$detail)) {
+  # A JSON body need not be an object: `$` on an atomic value would error and
+  # mask the HTTP status we are trying to report.
+  if (!is.list(body) || is.null(body$detail)) {
     return("")
   }
 
@@ -144,7 +146,10 @@
 
   records <- purrr::map(bodies, "data") |>
     unlist(recursive = FALSE)
-  result <- .records_to_tibble(records)
+  result <- .records_to_tibble(
+    records,
+    date_fields = names(metadata$filters)[metadata$filters == "Date"]
+  )
 
   .add_result_metadata(
     result,
@@ -171,7 +176,7 @@
     page_size,
     base_url
   )
-  total_pages <- as.integer(first$total_pages %||% 0L)
+  total_pages <- .response_total(first, "total_pages")
   bodies <- list(first)
 
   if (!isTRUE(all_pages) || total_pages <= page) {
@@ -181,6 +186,12 @@
   last_page <- total_pages
   if (is.finite(page_limit)) {
     last_page <- min(last_page, page + as.integer(page_limit) - 1L)
+  }
+
+  # `seq.int()` counts backwards when its second argument is the smaller one, so
+  # an exhausted budget must return here rather than fetch pages in reverse.
+  if (last_page <= page) {
+    return(bodies)
   }
 
   pages <- seq.int(page + 1L, last_page)
@@ -208,8 +219,8 @@
   attr(result, "obrasgovr_metadata") <- list(
     resource = resource,
     endpoint = metadata$endpoint,
-    total_pages = as.integer(first$total_pages %||% 0L),
-    total_items = as.integer(first$total_items %||% 0L),
+    total_pages = .response_total(first, "total_pages"),
+    total_items = .response_total(first, "total_items"),
     first_page = as.integer(page),
     pages_retrieved = length(bodies),
     page_size = as.integer(page_size),
@@ -244,7 +255,31 @@
   body
 }
 
-.records_to_tibble <- function(records) {
+# Pagination totals drive multi-page collection, so a missing one must abort
+# rather than default to zero: that would silently stop after the first page and
+# report the truncated result as complete.
+.response_total <- function(body, field) {
+  value <- body[[field]]
+
+  if (
+    !is.numeric(value) ||
+      length(value) != 1L ||
+      is.na(value) ||
+      value < 0
+  ) {
+    cli::cli_abort(
+      c(
+        "The API response has no usable {.field {field}}.",
+        "i" = "Pagination cannot be verified, so the result may be incomplete."
+      ),
+      class = "obrasgovr_response_error"
+    )
+  }
+
+  as.integer(value)
+}
+
+.records_to_tibble <- function(records, date_fields = character()) {
   if (length(records) == 0L) {
     return(tibble::tibble())
   }
@@ -252,7 +287,13 @@
   rows <- purrr::map(records, .record_to_tibble)
   result <- purrr::list_rbind(rows)
 
-  date_columns <- names(result)[grepl("^(dt_|data_)", names(result))]
+  # The `dt_`/`data_` prefixes catch most date fields, but not all: the API
+  # also names dates `vigencia_*`. Fields the resource declares as dates are
+  # typed too, so the result does not depend on naming luck.
+  date_columns <- union(
+    names(result)[grepl("^(dt_|data_)", names(result))],
+    intersect(date_fields, names(result))
+  )
 
   for (column in date_columns) {
     value <- result[[column]]
@@ -279,11 +320,13 @@
   }
 
   row <- purrr::map(record, function(value) {
-    if (is.null(value) || length(value) == 0L) {
-      return(NA)
-    }
+    # An empty JSON array is still a relationship, just an empty one. It must
+    # stay a list-column, or it becomes indistinguishable from `null`.
     if (is.list(value)) {
       return(list(value))
+    }
+    if (is.null(value) || length(value) == 0L) {
+      return(NA)
     }
     value
   })
@@ -344,12 +387,15 @@
     cli::cli_abort("{.arg all_pages} must be `TRUE` or `FALSE`.")
   }
 
+  # `Inf` is allowed and means "every page", but a merely huge finite value is
+  # not: `as.integer()` would turn it into `NA` when the page range is built.
   if (
     !is.numeric(page_limit) ||
       length(page_limit) != 1L ||
       is.na(page_limit) ||
       page_limit <= 0 ||
-      (!is.infinite(page_limit) && page_limit %% 1 != 0)
+      (!is.infinite(page_limit) &&
+         (page_limit %% 1 != 0 || page_limit > .Machine$integer.max))
   ) {
     cli::cli_abort(
       "{.arg page_limit} must be a positive integer or `Inf`."
@@ -360,14 +406,23 @@
 }
 
 .check_positive_integer <- function(value, argument) {
+  maximum <- .Machine$integer.max
+
+  # `is.finite()` must come before `%%`: `Inf %% 1` is `NaN`, which would make
+  # the condition itself error instead of reporting the bad argument. The upper
+  # bound keeps `as.integer()` from silently turning the value into `NA` later.
   if (
     !is.numeric(value) ||
       length(value) != 1L ||
-      is.na(value) ||
+      !is.finite(value) ||
       value < 1 ||
+      value > maximum ||
       value %% 1 != 0
   ) {
-    cli::cli_abort("{.arg {argument}} must be a positive integer.")
+    cli::cli_abort(
+      "{.arg {argument}} must be a positive integer no greater than
+       {.val {maximum}}."
+    )
   }
   invisible(NULL)
 }

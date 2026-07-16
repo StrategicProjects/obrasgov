@@ -64,3 +64,16 @@ test_that("Date filters are serialized in ISO format", {
     "dt_cadastro=2026-07-15"
   )
 })
+
+test_that("non-finite and oversized pagination arguments are rejected", {
+  # `Inf %% 1` is NaN, so the check itself errored; and a value above the
+  # integer range became NA when coerced, corrupting the query.
+  expect_error(get_projects(page = Inf), "positive integer")
+  expect_error(get_projects(page = NaN), "positive integer")
+  expect_error(get_projects(page = 2147483648), "positive integer")
+  expect_error(get_projects(page_size = Inf), "positive integer")
+  expect_error(
+    get_projects(all_pages = TRUE, page_limit = 2147483648),
+    "positive integer"
+  )
+})
