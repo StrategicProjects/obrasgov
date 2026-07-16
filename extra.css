@@ -1,0 +1,93 @@
+:root {
+  --obras-navy: #071f3d;
+  --obras-blue: #005ea8;
+  --obras-cyan: #00a1c9;
+  --obras-gold: #f5a623;
+  --obras-surface: #f4f9fc;
+}
+
+body {
+  color: #243447;
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+.navbar {
+  background: linear-gradient(105deg, var(--obras-navy), var(--obras-blue) 72%, #007fa8) !important;
+  border-bottom: 3px solid var(--obras-gold);
+  box-shadow: 0 0.25rem 1rem rgba(7, 31, 61, 0.16);
+}
+
+.navbar-brand,
+.navbar .nav-link,
+.navbar .navbar-toggler {
+  color: #fff !important;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+  color: #fff4cc !important;
+}
+
+.template-home .page-header {
+  border-bottom: 0;
+  margin-bottom: 1.75rem;
+}
+
+.template-home .readme-logo {
+  display: none;
+}
+
+.template-home .page-header .logo {
+  filter: drop-shadow(0 0.5rem 0.65rem rgba(7, 31, 61, 0.18));
+}
+
+.template-home main > blockquote {
+  background: linear-gradient(120deg, var(--obras-surface), #e9f7fb);
+  border-left: 0.35rem solid var(--obras-cyan);
+  border-radius: 0 0.65rem 0.65rem 0;
+  color: var(--obras-navy);
+  font-size: 1.12rem;
+  margin: 1.5rem 0 2rem;
+  padding: 1rem 1.25rem;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--obras-navy);
+  font-weight: 700;
+}
+
+h2 {
+  border-bottom: 2px solid #dceaf2;
+  padding-bottom: 0.35rem;
+}
+
+a {
+  text-underline-offset: 0.15em;
+}
+
+pre {
+  border: 1px solid #d8e7ef;
+  border-radius: 0.55rem;
+  box-shadow: 0 0.2rem 0.7rem rgba(7, 31, 61, 0.05);
+}
+
+.ref-index th,
+.ref-index td {
+  padding-block: 0.65rem;
+}
+
+.aside .links,
+.aside .roles {
+  background: var(--obras-surface);
+  border-radius: 0.65rem;
+  padding: 0.85rem 1rem;
+}
+
+footer {
+  border-top: 3px solid #dceaf2;
+  margin-top: 3rem;
+}

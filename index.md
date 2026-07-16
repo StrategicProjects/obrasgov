@@ -1,11 +1,16 @@
 # obrasgovr
 
+![obrasgovr hex logo](reference/figures/logo.svg)
+
 **obrasgovr** provides a modern R interface to the [ObrasGov Open Data
 API](https://api-publica.obrasgov.gestao.gov.br/obras/docs), maintained
 by the Brazilian federal government. It retrieves data about
 infrastructure projects, physical execution, budget commitments,
 contracts, geometries, feasibility studies, and the status histories of
 suspended or cancelled projects.
+
+> Turn Brazil’s public infrastructure data into analysis-ready R tables
+> with a consistent, typed and pagination-aware interface.
 
 ## Why use obrasgovr?
 
@@ -105,10 +110,10 @@ scheduled to be discontinued on August 31, 2026, and is not supported.
 
 ## Contributing and conduct
 
-Contributions are welcome. Read
-[CONTRIBUTING.md](https://strategicprojects.github.io/obrasgovr/CONTRIBUTING.md)
+Contributions are welcome. Read the [contributing
+guide](https://github.com/StrategicProjects/obrasgovr/blob/main/CONTRIBUTING.md)
 and the [Code of
-Conduct](https://strategicprojects.github.io/obrasgovr/CODE_OF_CONDUCT.md)
+Conduct](https://github.com/StrategicProjects/obrasgovr/blob/main/CODE_OF_CONDUCT.md)
 before opening an issue or pull request.
 
 ## License

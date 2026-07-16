@@ -19,3 +19,6 @@
 - Added step-by-step vignettes for resource discovery, safe pagination,
   nested data normalization, multi-resource joins, and reproducible
   provenance.
+- Added a custom vector hex logo and a more polished, accessible pkgdown
+  theme.
+- Updated the project author list.

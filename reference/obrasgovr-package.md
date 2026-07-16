@@ -27,15 +27,20 @@ documentation](https://api-publica.obrasgov.gestao.gov.br/obras/docs)
 ## Author
 
 **Maintainer**: Andre Leite <leite@castlab.org>
+([ORCID](https://orcid.org/0000-0002-4718-9766))
 
 Authors:
 
 - Andre Leite <leite@castlab.org>
+  ([ORCID](https://orcid.org/0000-0002-4718-9766))
 
-- Felipe Ferreira <felipe.ferreira@semobi.pe.gov.br>
+- Marcos Wasiliew <marcos.wasiliew@sepe.pe.gov.br>
 
 - Hugo Vasconcelos <hugo.vasconcelos@ufpe.br>
+  ([ORCID](https://orcid.org/0000-0001-6249-0920))
+
+- Carlos Amorim <carlos.agaf@ufpe.br>
+  ([ORCID](https://orcid.org/0000-0001-6315-8305))
 
 - Diogo Bezerra <diogo.bezerra@ufpe.br>
-
-- Roger Azevedo <roger.azevedo@tpfe.com.br>
+  ([ORCID](https://orcid.org/0000-0002-1216-8674))
